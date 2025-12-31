@@ -1,0 +1,105 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>StarkGrid Dashboard</title>
+    <meta charset="utf-8">
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            background: #f9fafb; 
+            color: #1e293b;
+        }
+        header {
+            background: #1e293b;
+            color: white;
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .demo-badge {
+            background: #ffeb3b;
+            color: #1e293b;
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .container { 
+            max-width: 900px; 
+            margin: 30px auto; 
+            padding: 0 20px; 
+        }
+        .asset { 
+            border: 1px solid #e2e8f0; 
+            padding: 20px; 
+            margin: 20px 0; 
+            border-radius: 10px; 
+            background: white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .status-nominal { border-left: 4px solid #10C286; }
+        .status-attention { border-left: 4px solid #FF5630; }
+        .soh-bar { 
+            height: 20px; 
+            background: #e2e8f0; 
+            border-radius: 4px; 
+            margin: 12px 0; 
+            overflow: hidden;
+        }
+        .soh-fill { 
+            height: 100%; 
+            border-radius: 4px; 
+        }
+        footer {
+            text-align: center;
+            padding: 24px;
+            color: #64748b;
+            font-size: 14px;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 40px;
+        }
+        .footer-note {
+            margin-top: 8px;
+            font-style: italic;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>⚡ StarkGrid – Energy Asset Intelligence</h1>
+        <div class="demo-badge">DEMO MODE</div>
+    </header>
+
+    <div class="container">
+        {% for asset in assets %}
+        <div class="asset status-{{ asset.status }}">
+            <h3>{{ asset.asset_id }} • {{ asset.location.zone }} / {{ asset.location.rack }}</h3>
+            <p><strong>Status:</strong> {{ asset.status.replace('_', ' ').title() }}</p>
+            <div>State of Health: {{ asset.metrics.state_of_health }}%</div>
+            <div class="soh-bar">
+                <div class="soh-fill" style="
+                    width: {{ asset.metrics.state_of_health }}%;
+                    background: {% if asset.metrics.state_of_health > 85 %}#10C286
+                                {% elif asset.metrics.state_of_health > 70 %}#FFAA33
+                                {% else %}#FF5630{% endif %};
+                "></div>
+            </div>
+            <p><strong>Voltage:</strong> {{ asset.metrics.voltage }}V • <strong>Temp:</strong> {{ asset.metrics.temperature }}°C</p>
+            {% if asset.alerts %}
+                <p style="color:#FF5630;"><strong>⚠️ Alerts:</strong> {{ asset.alerts|join(', ') }}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <footer>
+        StarkGrid v1.0 — Intelligent energy asset visibility platform<br>
+        <span class="footer-note">Pravici: Seeing what others overlook.• Confidential Demo • Q1 2025</span>
+    </footer>
+</body>
+</html>
